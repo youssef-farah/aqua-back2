@@ -36,6 +36,7 @@ public class CategoryController {
     @PostMapping
     @Operation(summary = "Create a new category")
     public ResponseEntity<Category> createCategory(@RequestBody Category category) {
+    	System.out.println("xxxxxxxxxxxxxxxxxxxxxxxxxxxx"+category.getId_category());
         Category created = categoryService.createCategory(category);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }

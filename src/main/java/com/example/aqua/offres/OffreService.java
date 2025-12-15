@@ -25,10 +25,6 @@ public class OffreService {
 	 private  OffreRepository offreRepository;
 
 	 public Offre createOffre(Offre offre) {
-	        // Since code is manually set, check if it already exists
-	        if (offreRepository.existsById(offre.getId())) {
-	            throw new ConflictException("Product with code " + offre.getId() + " already exists");
-	        }
 	        return offreRepository.save(offre);
 	    }
 
