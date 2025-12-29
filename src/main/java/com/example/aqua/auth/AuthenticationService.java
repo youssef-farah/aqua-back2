@@ -43,6 +43,7 @@ public AuthenticationResponse register(RegisterRequest request) {
         .mail(request.getEmail())
         .password(passwordEncoder.encode(request.getPassword()))
         .role(request.getRole())
+        .adresse(request.getAdresse())
         .build();
     var savedUser = repository.save(user);
     var jwtToken = jwtService.generateToken(user);

@@ -61,6 +61,12 @@ public class ProductController {
         Product updated = productService.updateProduct(code, product);
         return ResponseEntity.ok(updated);
     }
+	    @PutMapping("/stock/{code}")
+	    @Operation(summary = "Update product stock by code")
+	    public ResponseEntity<Product> updateProductStock(@PathVariable Long code, @RequestBody int stock) {
+	        Product updated = productService.updateProductStock(code, stock);
+	        return ResponseEntity.ok(updated);
+	    }
 
 	    @DeleteMapping("/{code}")
     @Operation(summary = "Delete product by code")

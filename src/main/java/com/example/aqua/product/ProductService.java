@@ -69,6 +69,16 @@ public class ProductService {
                 .orElseThrow(() -> new NotFoundException("Product not found with code " + code));
     }
 
+    public Product updateProductStock(Long code, int stock) {
+        return productRepository.findById(code)
+                .map(product -> {
+                    product.setStock(stock);
+                    return productRepository.save(product);
+                })
+                .orElseThrow(() -> new NotFoundException("Product not found with code " + code));
+    }
+    
+    
     // Delete
     public void deleteProduct(Long code) {
         if (!productRepository.existsById(code)) {

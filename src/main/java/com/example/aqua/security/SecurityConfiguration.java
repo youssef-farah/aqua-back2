@@ -57,6 +57,9 @@ public class SecurityConfiguration {
                 .requestMatchers("/api/auth/authenticate").permitAll()
                 .requestMatchers("/api/auth/logout").permitAll()
                 .requestMatchers("/api/auth/refresh-token").permitAll()
+                .requestMatchers("/api/auth/forgot-password").permitAll()
+                .requestMatchers("/api/auth/reset-password").permitAll()
+                
                 
                 // ---------------------------
                 // Public Static Resources

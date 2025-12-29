@@ -43,6 +43,7 @@ public class OffreService {
 	        return offreRepository.findById(id)
 	                .map(offre -> {
 	                    offre.setId(updatedOffre.getId());
+	                    offre.setTitre(updatedOffre.getTitre());
 	                    offre.setDescription(updatedOffre.getDescription());
 	                    offre.setImageUrl(updatedOffre.getImageUrl());
 	                    offre.setPrix(updatedOffre.getPrix());

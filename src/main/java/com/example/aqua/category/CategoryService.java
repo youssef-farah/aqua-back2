@@ -23,6 +23,7 @@ public class CategoryService {
 	    // Read (get all)
   @Transactional(readOnly = true)
   public List<Category> getAllCategories() {
+	  
 	        return categoryRepository.findAll();
 	    }
 
@@ -38,8 +39,11 @@ public class CategoryService {
               .map(category -> {
                   category.setNom(updatedCategory.getNom());
                   category.setDescription(updatedCategory.getDescription());
+                  System.out.println(updatedCategory.getNom() + updatedCategory.getParentCategory());
+
                   category.setParentCategory(updatedCategory.getParentCategory());
                  // category.setUser(updatedCategory.getUser());
+                  
                   return categoryRepository.save(category);
               })
               .orElseThrow(() -> new NotFoundException("Category not found with id " + id));

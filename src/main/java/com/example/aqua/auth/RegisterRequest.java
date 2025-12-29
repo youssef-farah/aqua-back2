@@ -1,4 +1,6 @@
 package com.example.aqua.auth;
+import com.example.aqua.Useraqua.Adresse;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,6 +16,7 @@ public class RegisterRequest {
   private String email;
   private String password;
   private String role;
+  private Adresse adresse;
 public String getFirstname() {
 	return firstname;
 }
@@ -44,13 +47,26 @@ public String getRole() {
 public void setRole(String role) {
 	this.role = role;
 }
-public RegisterRequest(String firstname, String lastname, String email, String password, String role) {
+
+public Adresse getAdresse()
+{
+	return adresse;
+}
+
+
+public void setAdresse(Adresse adresse)
+{
+	this.adresse = adresse;
+}
+
+public RegisterRequest(String firstname, String lastname, String email, String password, String role, Adresse adresse) {
 	
 	this.firstname = firstname;
 	this.lastname = lastname;
 	this.email = email;
 	this.password = password;
 	this.role = role;
+	this.adresse = adresse;
 }
 
   
