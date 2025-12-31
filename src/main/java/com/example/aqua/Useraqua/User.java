@@ -1,6 +1,7 @@
 package com.example.aqua.Useraqua;
 
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 
@@ -74,13 +75,20 @@ public class User implements UserDetails{
 	    @JsonIgnore
 	    private List<Order> orders;
 	  	
+	 // Add these new fields
+	  	@Column(nullable = false)
+	  	private boolean enabled = false;  // Default to false
+
+	  	@Column
+	  	private String verificationToken;
+
+	  	@Column
+	  	private LocalDateTime verificationTokenExpiry;
 	  	
 	  	
-	  	
-	  	
-	  	public User(Long id_user, String mail, String password, String role, String nom, String prenom, String telephone,
-				Adresse adresse,List<Category> categories , List<Order> orders) {
-			
+		public User(Long id_user, @Email @NotBlank String mail, @NotBlank String password, @NotBlank String role,
+				String nom, String prenom, String telephone, Adresse adresse, List<Category> categories,
+				List<Order> orders, boolean enabled, String verificationToken, LocalDateTime verificationTokenExpiry) {
 			this.id_user = id_user;
 			this.mail = mail;
 			this.password = password;
@@ -89,10 +97,21 @@ public class User implements UserDetails{
 			this.prenom = prenom;
 			this.telephone = telephone;
 			this.adresse = adresse;
-			this.categories  = categories;
+			this.categories = categories;
 			this.orders = orders;
+			this.enabled = enabled;
+			this.verificationToken = verificationToken;
+			this.verificationTokenExpiry = verificationTokenExpiry;
 		}
+
 		
+	  	
+	  	
+	  	
+	  	
+	  	
+	  	
+	  	
 		public User()
 		{}
 
@@ -190,6 +209,31 @@ public class User implements UserDetails{
 			 return mail;		}
 
 
+		
+		@Override
+		public boolean isEnabled() {
+		    return enabled;
+		}
+
+		@Override
+		public boolean isAccountNonExpired() {
+		    return true;	
+		}
+
+		@Override
+		public boolean isAccountNonLocked() {
+		    return true;
+		}
+
+		@Override
+		public boolean isCredentialsNonExpired() {
+		    return true;
+		}
+
+
+	
+
+	
 		
 	
 }

@@ -59,7 +59,7 @@ public class SecurityConfiguration {
                 .requestMatchers("/api/auth/refresh-token").permitAll()
                 .requestMatchers("/api/auth/forgot-password").permitAll()
                 .requestMatchers("/api/auth/reset-password").permitAll()
-                
+                .requestMatchers("/api/auth/verify-email").permitAll()
                 
                 // ---------------------------
                 // Public Static Resources

@@ -11,6 +11,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import com.example.aqua.Useraqua.User;
 import com.example.aqua.Useraqua.UserRepository;
 
 @Configuration
@@ -24,9 +25,15 @@ public class ApplicationConfig {
 
     @Bean
     public UserDetailsService userDetailsService() {
-        return username -> repository.findByMail(username)
-            .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        return username -> {
+            User user = repository.findByMail(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+            
+            // This allows Spring Security to check if account is enabled
+            return user;
+        };
     }
+    
 
     @Bean
     public AuthenticationProvider authenticationProvider() {
@@ -45,4 +52,8 @@ public class ApplicationConfig {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+    
+    
+    
+    
 }
