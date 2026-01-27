@@ -24,7 +24,8 @@ import java.util.Map;
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
 public class AuthenticationController {
-
+	
+	
     private final AuthenticationService service;
 
     @Autowired
@@ -123,4 +124,18 @@ public class AuthenticationController {
         service.logout(request);
         return ResponseEntity.ok(Map.of("message", "Logged out successfully"));
     }
+    
+    
+    
+    /**
+     * Authenticate with Google OAuth
+     */
+    @PostMapping("/google")
+    public ResponseEntity<AuthenticationResponse> authenticateWithGoogle(
+        @RequestBody GoogleTokenRequest request
+    ) {
+        return ResponseEntity.ok(service.authenticateWithGoogle(request.getToken()));
+    }
+    
+    
 }

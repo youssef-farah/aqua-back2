@@ -17,6 +17,8 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Table;
 
@@ -50,9 +52,11 @@ public class User implements UserDetails{
 	@NotBlank
 	@Column(nullable = false, unique = true)
 	private String mail;
-	@NotBlank
-	@Column(nullable = false)
+	
+	@Column(nullable = true)  // CHANGED from nullable = false
 	private String password;
+	
+	
 	@NotBlank
 	@Column(nullable = false)
 	private String role;
@@ -86,24 +90,43 @@ public class User implements UserDetails{
 	  	private LocalDateTime verificationTokenExpiry;
 	  	
 	  	
-		public User(Long id_user, @Email @NotBlank String mail, @NotBlank String password, @NotBlank String role,
-				String nom, String prenom, String telephone, Adresse adresse, List<Category> categories,
-				List<Order> orders, boolean enabled, String verificationToken, LocalDateTime verificationTokenExpiry) {
-			this.id_user = id_user;
-			this.mail = mail;
-			this.password = password;
-			this.role = role;
-			this.nom = nom;
-			this.prenom = prenom;
-			this.telephone = telephone;
-			this.adresse = adresse;
-			this.categories = categories;
-			this.orders = orders;
-			this.enabled = enabled;
-			this.verificationToken = verificationToken;
-			this.verificationTokenExpiry = verificationTokenExpiry;
-		}
+	  	
+	  	
+	  	
+	  	@Enumerated(EnumType.STRING)
+	  	@Column(nullable = false)
+	  	private AuthProvider authProvider = AuthProvider.LOCAL;
 
+	  	@Column
+	  	private String googleId;
+
+	  	
+	  	
+	  	
+	  	
+	  	
+	  	public User(Long id_user, @Email @NotBlank String mail, String password, 
+	            @NotBlank String role, String nom, String prenom, String telephone, 
+	            Adresse adresse, List<Category> categories, List<Order> orders, 
+	            boolean enabled, String verificationToken, 
+	            LocalDateTime verificationTokenExpiry, 
+	            AuthProvider authProvider, String googleId) {
+	    this.id_user = id_user;
+	    this.mail = mail;
+	    this.password = password;
+	    this.role = role;
+	    this.nom = nom;
+	    this.prenom = prenom;
+	    this.telephone = telephone;
+	    this.adresse = adresse;
+	    this.categories = categories;
+	    this.orders = orders;
+	    this.enabled = enabled;
+	    this.verificationToken = verificationToken;
+	    this.verificationTokenExpiry = verificationTokenExpiry;
+	    this.authProvider = authProvider != null ? authProvider : AuthProvider.LOCAL;
+	    this.googleId = googleId;
+	}
 		
 	  	
 	  	
@@ -233,7 +256,21 @@ public class User implements UserDetails{
 
 	
 
-	
+		public AuthProvider getAuthProvider() {
+		    return authProvider;
+		}
+
+		public void setAuthProvider(AuthProvider authProvider) {
+		    this.authProvider = authProvider;
+		}
+
+		public String getGoogleId() {
+		    return googleId;
+		}
+
+		public void setGoogleId(String googleId) {
+		    this.googleId = googleId;
+		}
 		
 	
 }

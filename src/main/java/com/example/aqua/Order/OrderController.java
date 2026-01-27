@@ -71,5 +71,15 @@ public class OrderController {
 		body.put("message", "Order deleted successfully");
 		return ResponseEntity.ok(body);
 	}
+    
+    
+    
+    
+    @GetMapping("/user/{id}")
+    @Operation(summary = "Get orders by user id")
+    public ResponseEntity<List<Order>> getByUserId(@PathVariable Long id) {
+        List<Order> orders = orderService.getByUserId(id);
+        return ResponseEntity.ok(orders);
+    }
 }
 

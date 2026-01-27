@@ -25,12 +25,18 @@ public class OrderService {
 	@Transactional(readOnly = true)
 	public List<Order> getAll() {
 		return orderRepository.findAll();
-	}
+	}	
 
 	@Transactional(readOnly = true)
 	public Optional<Order> getById(Long id) {
 		return orderRepository.findById(id);
 	}
+	
+	
+	  @Transactional(readOnly = true)
+	    public List<Order> getByUserId(Long userId) {
+	        return orderRepository.findOrdersByUserId(userId);
+	    }
 
 	public Order update(Long id, Order updated) {
 		return orderRepository.findById(id).map(o -> {

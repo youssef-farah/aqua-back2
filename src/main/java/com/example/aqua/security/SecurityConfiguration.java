@@ -60,7 +60,10 @@ public class SecurityConfiguration {
                 .requestMatchers("/api/auth/forgot-password").permitAll()
                 .requestMatchers("/api/auth/reset-password").permitAll()
                 .requestMatchers("/api/auth/verify-email").permitAll()
-                
+                .requestMatchers("/api/auth/google").permitAll()
+                .requestMatchers("/api/payements/sendpay/**").permitAll()
+                .requestMatchers("/api/payements/verifypay/**").permitAll()
+
                 // ---------------------------
                 // Public Static Resources
                 // ---------------------------

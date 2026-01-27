@@ -1,5 +1,8 @@
 package com.example.aqua.auth;
 
+import java.util.Collections;
+
+import com.example.aqua.Useraqua.AuthProvider;
 import com.example.aqua.Useraqua.User;
 import com.example.aqua.Useraqua.UserRepository;
 import com.example.aqua.mail.EmailVerificationService;
@@ -8,9 +11,16 @@ import com.example.aqua.tocken.Token;
 import com.example.aqua.tocken.TokenRepository;
 import com.example.aqua.tocken.TokenType;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
+import com.google.api.client.http.javanet.NetHttpTransport;
+import com.google.api.client.json.gson.GsonFactory;
+
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.DisabledException;
@@ -30,6 +40,9 @@ public class AuthenticationService {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
     private final EmailVerificationService emailVerificationService; // NEW
+   
+    @Value("${google.client.id}")
+    private String googleClientId;
 
     /**
      * Register new user and send verification email
@@ -168,4 +181,89 @@ public class AuthenticationService {
 
         System.out.println("User " + userEmail + " logged out and token revoked");
     }
+    
+    
+    
+    
+    
+    
+    public AuthenticationResponse authenticateWithGoogle(String googleIdToken) {
+        try {
+            // Verify Google token and extract user info
+            GoogleIdToken.Payload payload = verifyGoogleToken(googleIdToken);
+            
+            String email = payload.getEmail();
+            String googleId = payload.getSubject();
+            String firstName = (String) payload.get("given_name");
+            String lastName = (String) payload.get("family_name");
+            Boolean emailVerified = payload.getEmailVerified();
+            
+            if (emailVerified == null || !emailVerified) {
+                throw new RuntimeException("Google email not verified");
+            }
+            
+            // Find or create user
+            User user = repository.findByMail(email)
+                .orElseGet(() -> {
+                    // Create new user from Google account
+                    User newUser = User.builder()
+                        .mail(email)
+                        .prenom(firstName)
+                        .nom(lastName)
+                        .googleId(googleId)
+                        .authProvider(AuthProvider.GOOGLE)
+                        .password(null) // No password for Google users
+                        .role("USER") // Default role
+                        .enabled(true) // Google emails are pre-verified
+                        .build();
+                    return repository.save(newUser);
+                });
+            
+            // Check if account is disabled (shouldn't happen for Google users, but safety check)
+            if (!user.isEnabled()) {
+                throw new RuntimeException("Account is disabled");
+            }
+            
+            // If user exists but signed up with LOCAL (email/password)
+            if (user.getAuthProvider() == AuthProvider.LOCAL && user.getGoogleId() == null) {
+                // Link Google account to existing LOCAL account
+                user.setGoogleId(googleId);
+                repository.save(user);
+            }
+            
+            // Generate JWT tokens (same as regular login)
+            var jwtToken = jwtService.generateToken(user);
+            var refreshToken = jwtService.generateRefreshToken(user);
+            revokeAllUserTokens(user);
+            saveUserToken(user, jwtToken);
+            
+            return AuthenticationResponse.builder()
+                .accessToken(jwtToken)
+                .refreshToken(refreshToken)
+                .build();
+                
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to authenticate with Google: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Verify Google ID token with Google's servers
+     */
+    private GoogleIdToken.Payload verifyGoogleToken(String idTokenString) throws Exception {
+        GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(
+                new NetHttpTransport(), 
+                new GsonFactory())
+        		.setAudience(Collections.singletonList(googleClientId))
+            .build();
+        
+        GoogleIdToken idToken = verifier.verify(idTokenString);
+        if (idToken != null) {
+            return idToken.getPayload();
+        } else {
+            throw new RuntimeException("Invalid Google ID token");
+        }
+    }
+    
+    
 }

@@ -58,10 +58,6 @@ public class Payement {
 		}
 
 
-
-
-
-
 		public Long getId() {
 			return id;
 		}
