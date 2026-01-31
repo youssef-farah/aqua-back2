@@ -1,13 +1,11 @@
 package com.example.aqua.payement;
 
 public class CreatePaymentResponse {
-
 	
 	
-	
-	
-	 private String paymentId;
+	    private String paymentId;
 	    private String paymentUrl;
+	    
 		public String getPaymentId() {
 			return paymentId;
 		}

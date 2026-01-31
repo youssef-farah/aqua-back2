@@ -24,20 +24,24 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 
-
 @Entity
 @Table(name = "orders")
 public class Order {
 
-
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     private Instant createdAt = Instant.now();
     private Instant updatedAt;
 
-    public enum OrderState { CREATED, CONFIRMED, SHIPPED, DELIVERED, CANCELLED }
+    public enum OrderState { 
+        CREATED,      // Order created, awaiting payment
+        CONFIRMED,    // Payment successful
+        SHIPPED,      // Order shipped
+        DELIVERED,    // Order delivered
+        CANCELLED     // Order cancelled or payment failed
+    }
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -46,33 +50,33 @@ public class Order {
     @Column(nullable = false, precision = 19, scale = 2)
     private BigDecimal total = BigDecimal.ZERO;
 
-	@OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
-	@JsonManagedReference
-    private List<OrderItems> items;
+    // ✅ CRITICAL: Link to Flouci payment
+    @Column(name = "payment_id", unique = true)
+    private String paymentId;
 
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
+    @JsonManagedReference
+    private List<OrderItems> items;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_user", nullable = false)
     private User user;
-    
-public Order()
-{
-	
-}
-	
-	
-	
-	public Order(Long id, Instant createdAt, Instant updatedAt, OrderState state, BigDecimal total,
-			List<OrderItems> items ,User user) {
-		
-		this.id = id;
-		this.createdAt = createdAt;
-		this.updatedAt = updatedAt;
-		this.state = state;
-		this.total = total;
-		this.items = items;
-		this.user = user;
-	}
+
+    // ==================== Constructors ====================
+
+    public Order() {
+    }
+
+    public Order(Long id, Instant createdAt, Instant updatedAt, OrderState state, 
+                 BigDecimal total, List<OrderItems> items, User user) {
+        this.id = id;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+        this.state = state;
+        this.total = total;
+        this.items = items;
+        this.user = user;
+    }
 
 	public Long getId() {
 		return id;
@@ -133,6 +137,16 @@ public Order()
 	public void setUser(User user) {
 		this.user = user;
 	}
+
+	public String getPaymentId() {
+		return paymentId;
+	}
+
+	public void setPaymentId(String paymentId) {
+		this.paymentId = paymentId;
+	}
+	
+	
 	
 	
 	
