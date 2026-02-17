@@ -1,10 +1,16 @@
 package com.example.aqua.category;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.example.aqua.exception.NotFoundException;
 
@@ -39,8 +45,8 @@ public class CategoryService {
               .map(category -> {
                   category.setNom(updatedCategory.getNom());
                   category.setDescription(updatedCategory.getDescription());
-                  System.out.println(updatedCategory.getNom() + updatedCategory.getParentCategory());
-
+                  
+                  category.setImage(updatedCategory.getImage());
                   category.setParentCategory(updatedCategory.getParentCategory());
                  // category.setUser(updatedCategory.getUser());
                   
@@ -73,6 +79,23 @@ public class CategoryService {
 	        return categoryRepository.findByParentCategory(parent);
 	    }
 	
+  
+  
+  public String saveImage(MultipartFile file) throws IOException {
+      String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
+      Path uploadPath = Paths.get(System.getProperty("user.dir"), "uploads");
+
+      if (!Files.exists(uploadPath)) {
+          Files.createDirectories(uploadPath);
+      }
+
+      Path filePath = uploadPath.resolve(fileName);
+      Files.write(filePath, file.getBytes());
+
+      // Return only the filename
+      return fileName;
+  }
+
 	
 
 }

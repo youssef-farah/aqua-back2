@@ -145,12 +145,12 @@ public class FlouciService {
      * Parse Flouci payment verification response
      */
     private PaymentVerificationResponse parseVerificationResponse(String jsonResponse) throws Exception {
-        JsonNode root = objectMapper.readTree(jsonResponse);
+        JsonNode root = objectMapper.readTree(jsonResponse);	
         JsonNode result = root.path("result");
         
         String status = result.path("status").asText();
         Long amount = result.path("amount").asLong();
-        System.out.println(status);
+        System.out.println(status + "000000000000000000000000000000000000000");
         return new PaymentVerificationResponse(status, amount, jsonResponse);
     }
 

@@ -1,5 +1,6 @@
 package com.example.aqua.product;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -63,7 +64,23 @@ public class ProductService {
                     product.setPrix(updatedProduct.getPrix());
                     product.setImage(updatedProduct.getImage());
                     product.setCategory(updatedProduct.getCategory());
-                   
+
+                    
+                    // Initialize options list if null (IMPORTANT FIX)
+                    if (product.getOptions() == null) {
+                        product.setOptions(new ArrayList<>());
+                    }
+                    
+                    // Clear existing options
+                    product.getOptions().clear();
+
+                    if (updatedProduct.getOptions() != null) {
+                        for (ProductOption option : updatedProduct.getOptions()) {
+                            option.setProduct(product);
+                            product.getOptions().add(option);
+                        }
+                    }
+
                     return productRepository.save(product);
                 })
                 .orElseThrow(() -> new NotFoundException("Product not found with code " + code));

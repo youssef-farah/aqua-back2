@@ -15,7 +15,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.example.aqua.exception.NotFoundException;
 
@@ -85,5 +87,16 @@ public class CategoryController {
     public ResponseEntity<List<Category>> getChildren(@PathVariable Long id) {
         return ResponseEntity.ok(categoryService.getChildCategories(id));
     }
+	    
+	    
+	    @PostMapping("/upload")
+	    public ResponseEntity<String> uploadImage(@RequestParam("file") MultipartFile file) {
+	        try {
+	            String fileName = categoryService.saveImage(file);
+	            return ResponseEntity.ok(fileName);
+	        } catch (Exception e) {
+	            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Upload failed");
+	        }
+	    }
 	
 }

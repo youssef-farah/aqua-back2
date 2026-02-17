@@ -56,8 +56,23 @@ public class Category {
 	    @JsonBackReference(value = "user-categories")
 	    private User user;
 	    
+	    private String image;
+
 	    
 	    
+	    
+	    
+	    
+		public String getImage() {
+			return image;
+		}
+
+
+		public void setImage(String image) {
+			this.image = image;
+		}
+
+
 		public Long getId_category() {
 			return id_category;
 		}
@@ -131,7 +146,7 @@ public class Category {
 
 
 		public Category(Long id_category, @NotBlank String nom, String description, Category parentCategory,
-				List<Category> childCategories, List<Product> products, User user) {
+				List<Category> childCategories, List<Product> products, User user, String image) {
 			
 			this.id_category = id_category;
 			this.nom = nom;
@@ -140,6 +155,7 @@ public class Category {
 			this.childCategories = childCategories;
 			this.products = products;
 			this.user = user;
+			this.image = image;
 		}
 	    
 		public Category()

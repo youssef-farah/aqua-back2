@@ -1,6 +1,7 @@
 package com.example.aqua.product;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -8,6 +9,7 @@ import com.example.aqua.category.Category;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
@@ -17,6 +19,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.MapKeyColumn;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Min;
@@ -45,7 +48,7 @@ public class Product {
 
     @NotNull
     @DecimalMin(value = "0.00")
-    @Column(nullable = false, precision = 19, scale = 2)
+    @Column(nullable = true, precision = 19, scale = 2)
     private BigDecimal prix;
 
     private String image;
@@ -66,14 +69,10 @@ public class Product {
     @Column(name = "info_value", columnDefinition = "TEXT")
     private Map<String, String> complementaryInfos;
 
-    // Optional add-ons/options for the product (e.g., "turbo engine", "extra storage")
-    @ElementCollection(fetch = FetchType.LAZY)
-    @CollectionTable(
-        name = "product_options",
-        joinColumns = @JoinColumn(name = "product_code", referencedColumnName = "code")
-    )
-    @Column(name = "option_value")
-    private List<String> options;
+    //Optional add-ons/options for the product (e.g., "turbo engine", "extra storage")
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JsonManagedReference(value = "product-options")
+    private List<ProductOption> options = new ArrayList<>();  // ← Initialize here
 
     
     
@@ -86,7 +85,7 @@ public class Product {
     
     
 	public Product(Long code, String titre, String description, String lieuDeProduction, int stock, BigDecimal prix,
-			String image) {
+			String image, List<ProductOption> options) {
 		
 		this.code = code;
 		this.titre = titre;
@@ -95,6 +94,7 @@ public class Product {
 		this.stock = stock;
 		this.prix = prix;
 		this.image = image;
+		this.options = options;
 	}
 	
 	
@@ -111,14 +111,18 @@ public class Product {
 
 
 
-	public List<String> getOptions() {
-		return options;
+	public List<ProductOption> getOptions() {
+	    return options;
 	}
 
-
-
-	public void setOptions(List<String> options) {
-		this.options = options;
+	public void setOptions(List<ProductOption> options) {
+	    this.options.clear();
+	    if (options != null) {
+	        for (ProductOption option : options) {
+	            option.setProduct(this);
+	            this.options.add(option);
+	        }
+	    }
 	}
 
 
