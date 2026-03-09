@@ -228,6 +228,8 @@ public class PayementController {
         private Long productId;
         private Integer quantity;
         private Double price;
+        private String productoption; 
+
 
         // Getters and setters
         public Long getProductId() { return productId; }
@@ -238,5 +240,13 @@ public class PayementController {
         
         public Double getPrice() { return price; }
         public void setPrice(Double price) { this.price = price; }
+		public String getProductoption() {
+			return productoption;
+		}
+		public void setProductoption(String productoption) {
+			this.productoption = productoption;
+		}
+        
+        
     }
 }

@@ -89,6 +89,7 @@ public class OrderService {
 	            orderItem.setSubTotal(
 	                BigDecimal.valueOf(cartItem.getPrice()).multiply(BigDecimal.valueOf(cartItem.getQuantity()))
 	            );
+	            orderItem.setProductoption(cartItem.getProductoption());
 
 	            orderItemRepository.save(orderItem);
 	        }

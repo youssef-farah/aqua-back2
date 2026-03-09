@@ -37,6 +37,9 @@ public class OrderItems {
 	@JoinColumn(name = "product_code", referencedColumnName = "code")
 	private Product product;
 
+	
+	private String productoption; 
+	
 	@Min(1)
 	@Column(nullable = false)
 	private int quantity;
@@ -100,9 +103,19 @@ public class OrderItems {
 	public void setSubTotal(BigDecimal subTotal) {
 		this.subTotal = subTotal;
 	}
+	
+
+
+	public String getProductoption() {
+		return productoption;
+	}
+
+	public void setProductoption(String productoption) {
+		this.productoption = productoption;
+	}
 
 	public OrderItems(Long id, Order order, Product product, @Min(1) int quantity,
-			@NotNull @DecimalMin("0.00") BigDecimal unitPrice, @NotNull @DecimalMin("0.00") BigDecimal subTotal) {
+			@NotNull @DecimalMin("0.00") BigDecimal unitPrice, @NotNull @DecimalMin("0.00") BigDecimal subTotal, String Productoption) {
 		super();
 		this.id = id;
 		this.order = order;
@@ -110,6 +123,7 @@ public class OrderItems {
 		this.quantity = quantity;
 		this.unitPrice = unitPrice;
 		this.subTotal = subTotal;
+		this.productoption = Productoption;
 	}
 	
 	
