@@ -83,6 +83,6 @@ public class Offre {
 	    	
 	    }
 	    
-	    /*test*/
+	    /*test 2*/
 	
 }
